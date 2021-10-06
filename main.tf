@@ -276,12 +276,6 @@ resource "oci_load_balancer_backend_set" "lb-bes2" {
     response_body_regex = ".*"
     url_path            = "/"
   }
-
-  ssl_configuration {
-    protocols         = ["TLSv1.1", "TLSv1.2"]
-    cipher_suite_name = oci_load_balancer_ssl_cipher_suite.test_ssl_cipher_suite2.name
-    certificate_name  = oci_load_balancer_certificate.lb-cert2.certificate_name
-  }
 }
 
 
@@ -337,13 +331,6 @@ resource "oci_load_balancer_listener" "lb-listener2" {
   port                     = 443
   protocol                 = "HTTP"
 
-  ssl_configuration {
-    certificate_name        = oci_load_balancer_certificate.lb-cert1.certificate_name
-    verify_peer_certificate = false
-    protocols               = ["TLSv1.1", "TLSv1.2"]
-    server_order_preference = "ENABLED"
-    cipher_suite_name       = oci_load_balancer_ssl_cipher_suite.test_ssl_cipher_suite.name
-  }
 }
 
 resource "oci_load_balancer_listener" "lb-listener3" {
