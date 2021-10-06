@@ -15,9 +15,6 @@ variable "fingerprint" {}
 variable "private_key_path" {}
 variable "compartment_ocid" {}
 variable "region" {}
-variable ca_certificate {}
-variable private_key {}
-variable public_certificate {}
 variable "instance_image_ocid" {
   type = map(string)
   default = {
@@ -287,29 +284,6 @@ resource "oci_load_balancer_backend_set" "lb-bes2" {
   }
 }
 
-resource "oci_load_balancer_certificate" "lb-cert1" {
-  load_balancer_id   = oci_load_balancer.lb1.id
-  ca_certificate     = var.ca_certificate
-  certificate_name   = "certificate1"
-  private_key        = var.private_key
-  public_certificate = var.public_certificate
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "oci_load_balancer_certificate" "lb-cert2" {
-  load_balancer_id   = oci_load_balancer.lb2.id
-  ca_certificate     = var.ca_certificate
-  certificate_name   = "certificate2"
-  private_key        = var.private_key
-  public_certificate = var.public_certificate
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
 
 resource "oci_load_balancer_path_route_set" "test_path_route_set" {
   #Required
@@ -469,19 +443,4 @@ output "lb_public_ip" {
   value = [oci_load_balancer.lb1.ip_address_details]
 }
 
-resource "oci_load_balancer_ssl_cipher_suite" "test_ssl_cipher_suite" {
-  #Required
-  name = "test_cipher_name"
-
-  ciphers = ["AES128-SHA", "AES256-SHA"]
-
-  #Optional
-  load_balancer_id = oci_load_balancer.lb1.id
-}
-
-resource "oci_load_balancer_ssl_cipher_suite" "test_ssl_cipher_suite2" {
-  #Required
-  name = "test_cipher_name"
-
-  ciphers = ["AES128-SHA", "AES256-SHA"]
 
