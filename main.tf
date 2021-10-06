@@ -13,6 +13,7 @@ variable "tenancy_ocid" {}
 variable "user_ocid" {}
 variable "fingerprint" {}
 variable "compartment_ocid" {}
+variable "private_key" {}
 variable "region" {}
 variable "instance_image_ocid" {
   type = map(string)
