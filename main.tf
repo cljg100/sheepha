@@ -1,14 +1,8 @@
-// Copyright (c) 2017, 2021, Oracle and/or its affiliates. All rights reserved.
-// Licensed under the Mozilla Public License v2.0
-
 /*
- * This example demonstrates round robin load balancing behavior by creating two instances, a configured
- * vcn and a load balancer. The public IP of the load balancer is outputted after a successful run, curl
- * this address to see the hostname change as different instances handle the request.
- *
- * NOTE: The https listener is included for completeness but should not be expected to work,
- * it uses dummy certs.
- */
+ * Desafio - modulo4 - OCI: Execução de script de instalação do apache + load balancing - via Terraform
+ *  
+ *  
+*/
 variable "tenancy_ocid" {}
 variable "user_ocid" {}
 variable "fingerprint" {}
@@ -56,11 +50,11 @@ resource "oci_core_vcn" "vcn1" {
   display_name   = "vcn1"
   dns_label      = "vcn1"
 }
-resource "oci_core_subnet" "tcb_subnet1" {
+resource "oci_core_subnet" "subnet1" {
   availability_domain = data.oci_identity_availability_domain.tcb_ad1.name
   cidr_block          = "10.1.20.0/24"
-  display_name        = "tcb_subnet1"
-  dns_label           = "tcb_subnet1"
+  display_name        = "subnet1"
+  dns_label           = "subnet1"
   security_list_ids   = [oci_core_security_list.tcb_securitylist1.id]
   compartment_id      = var.compartment_ocid
   vcn_id              = oci_core_vcn.vcn1.id
@@ -71,11 +65,11 @@ resource "oci_core_subnet" "tcb_subnet1" {
     command = "sleep 5"
   }
 }
-resource "oci_core_subnet" "tcb_subnet2" {
+resource "oci_core_subnet" "subnet2" {
   availability_domain = data.oci_identity_availability_domain.tcb_ad2.name
   cidr_block          = "10.1.21.0/24"
-  display_name        = "tcb_subnet2"
-  dns_label           = "tcb_subnet2"
+  display_name        = "subnet2"
+  dns_label           = "subnet2"
   security_list_ids   = [oci_core_security_list.tcb_securitylist1.id]
   compartment_id      = var.compartment_ocid
   vcn_id              = oci_core_vcn.vcn1.id
@@ -144,7 +138,7 @@ resource "oci_core_instance" "websiteha1" {
   shape               = var.instance_shape
 
   create_vnic_details {
-    subnet_id        = oci_core_subnet.tcb_subnet1.id
+    subnet_id        = oci_core_subnet.subnet1.id
     display_name     = "primaryvnic"
     assign_public_ip = true
     hostname_label   = "websiteha1"
@@ -192,7 +186,7 @@ resource "oci_core_instance" "websiteha2" {
   shape               = var.instance_shape
 
   create_vnic_details {
-    subnet_id        = oci_core_subnet.tcb_subnet2.id
+    subnet_id        = oci_core_subnet.subnet2.id
     display_name     = "primaryvnic"
     assign_public_ip = true
     hostname_label   = "websiteha2"
@@ -241,8 +235,8 @@ resource "oci_load_balancer" "tcb_lb1" {
   compartment_id = var.compartment_ocid
 
   subnet_ids = [
-    oci_core_subnet.tcb_subnet1.id,
-    oci_core_subnet.tcb_subnet2.id,
+    oci_core_subnet.subnet1.id,
+    oci_core_subnet.subnet2.id,
   ]
 
   display_name = "tcb_lb1"
