@@ -9,7 +9,6 @@ variable "user_ocid" {}
 variable "fingerprint" {}
 variable "private_key" {}
 variable "ssh_public_key" {}
-variable "private_key_openssh" {}
 
 provider "oci" {
   tenancy_ocid = var.tenancy_ocid
@@ -109,52 +108,6 @@ resource "oci_core_security_list" "tcb_security_list" {
     tcp_options {
       max = "80"
       min = "80"
-    }
-  }
-}
-
-resource "oci_core_instance" "webserverha10" {
-  availability_domain = data.oci_identity_availability_domain.ad.name
-  compartment_id      = var.compartment_ocid
-  display_name        = "webserverha10"
-  shape               = "VM.Standard.E2.1.Micro"
-
-  create_vnic_details {
-    subnet_id        = oci_core_subnet.tcb_subnet.id
-    display_name     = "primaryvnic"
-    assign_public_ip = true
-    hostname_label   = "webserverha10"
-  }
-
-  source_details {
-    source_type = "image"
-    source_id   = var.images[var.region]
-  }
-
-  metadata = {
-    ssh_authorized_keys = var.ssh_public_key
-  }
-
-  provisioner "file" {
-    source      = "deploy_niture.sh"
-    destination = "/tmp/deploy_niture.sh"
-    connection {
-      type = "ssh"
-      host = "${self.public_ip}"
-      private_key = var.private_key_openssh
-    }
-
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/deploy_niture.sh",
-      "/tmp/deploy_niture.sh",
-    ]
-    connection {
-      type = "ssh"
-      host = "${self.public_ip}"
-      private_key = var.private_key_openssh
     }
   }
 }
