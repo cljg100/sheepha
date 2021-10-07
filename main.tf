@@ -41,65 +41,65 @@ provider "oci" {
   private_key      = var.private_key
   region           = var.region
 }
-data "oci_identity_availability_domain" "ad1" {
+data "oci_identity_availability_domain" "tcb_ad1" {
   compartment_id = var.tenancy_ocid
   ad_number      = 1
 }
-data "oci_identity_availability_domain" "ad2" {
+data "oci_identity_availability_domain" "tcb_ad2" {
   compartment_id = var.tenancy_ocid
   ad_number      = 2
 }
 /* Network */
-resource "oci_core_vcn" "vcn1" {
+resource "oci_core_vcn" "tcb_vcn1" {
   cidr_block     = "10.1.0.0/16"
   compartment_id = var.compartment_ocid
-  display_name   = "vcn1"
-  dns_label      = "vcn1"
+  display_name   = "tcb_vcn1"
+  dns_label      = "tcb_vcn1"
 }
-resource "oci_core_subnet" "subnet1" {
-  availability_domain = data.oci_identity_availability_domain.ad1.name
+resource "oci_core_subnet" "tcb_subnet1" {
+  availability_domain = data.oci_identity_availability_domain.tcb_ad1.name
   cidr_block          = "10.1.20.0/24"
-  display_name        = "subnet1"
-  dns_label           = "subnet1"
-  security_list_ids   = [oci_core_security_list.securitylist1.id]
+  display_name        = "tcb_subnet1"
+  dns_label           = "tcb_subnet1"
+  security_list_ids   = [oci_core_security_list.tcb_securitylist1.id]
   compartment_id      = var.compartment_ocid
-  vcn_id              = oci_core_vcn.vcn1.id
-  route_table_id      = oci_core_route_table.routetable1.id
-  dhcp_options_id     = oci_core_vcn.vcn1.default_dhcp_options_id
+  vcn_id              = oci_core_vcn.tcb_vcn1.id
+  route_table_id      = oci_core_route_table.tcb_routetable1.id
+  dhcp_options_id     = oci_core_vcn.tcb_vcn1.default_dhcp_options_id
 
   provisioner "local-exec" {
     command = "sleep 5"
   }
 }
-resource "oci_core_subnet" "subnet2" {
-  availability_domain = data.oci_identity_availability_domain.ad2.name
+resource "oci_core_subnet" "tcb_subnet2" {
+  availability_domain = data.oci_identity_availability_domain.tcb_ad2.name
   cidr_block          = "10.1.21.0/24"
-  display_name        = "subnet2"
-  dns_label           = "subnet2"
-  security_list_ids   = [oci_core_security_list.securitylist1.id]
+  display_name        = "tcb_subnet2"
+  dns_label           = "tcb_subnet2"
+  security_list_ids   = [oci_core_security_list.tcb_securitylist1.id]
   compartment_id      = var.compartment_ocid
-  vcn_id              = oci_core_vcn.vcn1.id
-  route_table_id      = oci_core_route_table.routetable1.id
-  dhcp_options_id     = oci_core_vcn.vcn1.default_dhcp_options_id
+  vcn_id              = oci_core_vcn.tcb_vcn1.id
+  route_table_id      = oci_core_route_table.tcb_routetable1.id
+  dhcp_options_id     = oci_core_vcn.tcb_vcn1.default_dhcp_options_id
   provisioner "local-exec" {
     command = "sleep 5"
   }
 }
-resource "oci_core_internet_gateway" "internetgateway1" {
+resource "oci_core_internet_gateway" "tcb_internetgateway1" {
   compartment_id = var.compartment_ocid
-  display_name   = "internetgateway1"
+  display_name   = "tcb_internetgateway1"
   vcn_id         = oci_core_vcn.vcn1.id
 }
 
-resource "oci_core_route_table" "routetable1" {
+resource "oci_core_route_table" "tcb_routetable1" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.vcn1.id
-  display_name   = "routetable1"
+  display_name   = "tcb_routetable1"
 
   route_rules {
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.internetgateway1.id
+    network_entity_id = oci_core_internet_gateway.tcb_internetgateway1.id
   }
 }
 
@@ -110,10 +110,10 @@ resource "oci_core_public_ip" "test_reserved_ip" {
     ignore_changes = [private_ip_id]
   }
 }
-resource "oci_core_security_list" "securitylist1" {
+resource "oci_core_security_list" "tcb_securitylist1" {
   display_name   = "public"
-  compartment_id = oci_core_vcn.vcn1.compartment_id
-  vcn_id         = oci_core_vcn.vcn1.id
+  compartment_id = oci_core_vcn.tcb_vcn1.compartment_id
+  vcn_id         = oci_core_vcn.tcb_vcn1.id
   egress_security_rules {
     protocol    = "all"
     destination = "0.0.0.0/0"
@@ -137,17 +137,17 @@ resource "oci_core_security_list" "securitylist1" {
 }
 /* Instances */
 
-resource "oci_core_instance" "instance1" {
-  availability_domain = data.oci_identity_availability_domain.ad1.name
+resource "oci_core_instance" "websiteha1" {
+  availability_domain = data.oci_identity_availability_domain.tcb_ad1.name
   compartment_id      = var.compartment_ocid
-  display_name        = "instance1"
+  display_name        = "websiteha1"
   shape               = var.instance_shape
 
   create_vnic_details {
-    subnet_id        = oci_core_subnet.subnet1.id
+    subnet_id        = oci_core_subnet.tcb_subnet1.id
     display_name     = "primaryvnic"
     assign_public_ip = true
-    hostname_label   = "instance1"
+    hostname_label   = "websiteha1"
   }
 
   source_details {
@@ -185,17 +185,17 @@ resource "oci_core_instance" "instance1" {
   }
 }
 
-resource "oci_core_instance" "instance2" {
-  availability_domain = data.oci_identity_availability_domain.ad2.name
+resource "oci_core_instance" "websiteha2" {
+  availability_domain = data.oci_identity_availability_domain.tcb_ad2.name
   compartment_id      = var.compartment_ocid
-  display_name        = "instance2"
+  display_name        = "websiteha2"
   shape               = var.instance_shape
 
   create_vnic_details {
-    subnet_id        = oci_core_subnet.subnet2.id
+    subnet_id        = oci_core_subnet.tcb_subnet2.id
     display_name     = "primaryvnic"
     assign_public_ip = true
-    hostname_label   = "instance2"
+    hostname_label   = "websiteha2"
   }
 
   source_details {
@@ -236,25 +236,25 @@ resource "oci_core_instance" "instance2" {
 
 /* Load Balancer */
 
-resource "oci_load_balancer" "lb1" {
+resource "oci_load_balancer" "tcb_lb1" {
   shape          = "100Mbps"
   compartment_id = var.compartment_ocid
 
   subnet_ids = [
-    oci_core_subnet.subnet1.id,
-    oci_core_subnet.subnet2.id,
+    oci_core_subnet.tcb_subnet1.id,
+    oci_core_subnet.tcb_subnet2.id,
   ]
 
-  display_name = "lb1"
+  display_name = "tcb_lb1"
   reserved_ips {
     id = "${oci_core_public_ip.test_reserved_ip.id}"
   }
 }
 
 
-resource "oci_load_balancer_backend_set" "lb-bes1" {
-  name             = "lb-bes1"
-  load_balancer_id = oci_load_balancer.lb1.id
+resource "oci_load_balancer_backend_set" "tcb-lb-beset1" {
+  name             = "tcb-lb-beset1"
+  load_balancer_id = oci_load_balancer.tcb_lb1.id
   policy           = "ROUND_ROBIN"
 
   health_checker {
@@ -266,10 +266,10 @@ resource "oci_load_balancer_backend_set" "lb-bes1" {
 }
 
 
-resource "oci_load_balancer_listener" "lb-listener1" {
-  load_balancer_id         = oci_load_balancer.lb1.id
+resource "oci_load_balancer_listener" "tcb-lb-listener1" {
+  load_balancer_id         = oci_load_balancer.tcb_lb1.id
   name                     = "http"
-  default_backend_set_name = oci_load_balancer_backend_set.lb-bes1.name
+  default_backend_set_name = oci_load_balancer_backend_set.tcb-lb-beset1.name
   port                     = 80
   protocol                 = "HTTP"
 
@@ -279,10 +279,10 @@ resource "oci_load_balancer_listener" "lb-listener1" {
 }
 
 
-resource "oci_load_balancer_backend" "lb-be1" {
-  load_balancer_id = oci_load_balancer.lb1.id
-  backendset_name  = oci_load_balancer_backend_set.lb-bes1.name
-  ip_address       = oci_core_instance.instance1.private_ip
+resource "oci_load_balancer_backend" "tcb-lb-be1" {
+  load_balancer_id = oci_load_balancer.tcb_lb1.id
+  backendset_name  = oci_load_balancer_backend_set.lb-beset1.name
+  ip_address       = oci_core_instance.webserverha1.private_ip
   port             = 80
   backup           = false
   drain            = false
@@ -290,10 +290,10 @@ resource "oci_load_balancer_backend" "lb-be1" {
   weight           = 1
 }
 
-resource "oci_load_balancer_backend" "lb-be2" {
-  load_balancer_id = oci_load_balancer.lb1.id
-  backendset_name  = oci_load_balancer_backend_set.lb-bes1.name
-  ip_address       = oci_core_instance.instance2.private_ip
+resource "oci_load_balancer_backend" "tcb-lb-be2" {
+  load_balancer_id = oci_load_balancer.tcb_lb1.id
+  backendset_name  = oci_load_balancer_backend_set.lb-beset1.name
+  ip_address       = oci_core_instance.webserverha2.private_ip
   port             = 80
   backup           = false
   drain            = false
@@ -303,6 +303,6 @@ resource "oci_load_balancer_backend" "lb-be2" {
 
 
 output "lb_public_ip" {
-  value = [oci_load_balancer.lb1.ip_address_details]
+  value = [oci_load_balancer.tcb_lb1.ip_address_details]
 }
 
