@@ -131,22 +131,18 @@ resource "oci_core_instance" "webserverha10" {
   }
 
   metadata = {
-    user_data = base64encode(var.user-data)
+    ssh_authorized_keys = var.ssh_public_key
   }
-}
-variable "user-data" {
-default = <<EOF
-#!/bin/bash -x
-yum install httpd -y
-apachectl start
-systemctl enable httpd
-firewall-cmd --zone=public --add-service=http
-firewall-cmd --permanent --zone=public --add-service=http
-echo "chamei aqui" > /var/www/html/teste.txt
-cd /var/www/html/
-wget https://objectstorage.us-ashburn-1.oraclecloud.com/p/u8j40_AS-7pRypC5boQT24w5QFPDTy-0j27BWBOfmsxbERTiuDtJQBIqfcsOH81F/n/idqfa2z2mift/b/bootcamp-oci/o/oci-f-handson-modulo-compute-website-files.zip
-unzip oci-f-handson-modulo-compute-website-files.zip
-chown -R apache:apache /var/www/html
-rm -rf oci-f-handson-modulo-compute-website-files.zip
-EOF
+
+  provisioner "file" {
+    source      = "deploy_niture.sh"
+    destination = "/tmp/deploy_niture.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/deploy_niture.sh",
+      "/tmp/deploy_niture.sh",
+    ]
+  }
 }
