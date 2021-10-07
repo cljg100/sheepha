@@ -251,26 +251,6 @@ resource "oci_load_balancer" "lb1" {
   }
 }
 
-resource "oci_load_balancer" "lb2" {
-  shape          = "100Mbps"
-  compartment_id = var.compartment_ocid
-
-  subnet_ids = [
-    oci_core_subnet.subnet1.id,
-    oci_core_subnet.subnet2.id,
-  ]
-
-  display_name = "lb2"
-}
-
-
-variable "load_balancer_shape_details_maximum_bandwidth_in_mbps" {
-  default = 100
-}
-
-variable "load_balancer_shape_details_minimum_bandwidth_in_mbps" {
-  default = 10
-}
 
 resource "oci_load_balancer_backend_set" "lb-bes1" {
   name             = "lb-bes1"
@@ -283,21 +263,6 @@ resource "oci_load_balancer_backend_set" "lb-bes1" {
     response_body_regex = ".*"
     url_path            = "/"
   }
-}
-
-resource "oci_load_balancer_backend_set" "lb-bes2" {
-  name             = "lb-bes2"
-  load_balancer_id = oci_load_balancer.lb2.id
-  policy           = "ROUND_ROBIN"
-
-  health_checker {
-    port                = "80"
-    protocol            = "TCP"
-    response_body_regex = ".*"
-    url_path            = "/"
-  }
-
-
 }
 
 
@@ -314,19 +279,6 @@ resource "oci_load_balancer_listener" "lb-listener1" {
 }
 
 
-resource "oci_load_balancer_listener" "lb-listener3" {
-  load_balancer_id         = oci_load_balancer.lb2.id
-  name                     = "tcp"
-  default_backend_set_name = oci_load_balancer_backend_set.lb-bes2.name
-  port                     = 80
-  protocol                 = "TCP"
-
-  connection_configuration {
-    idle_timeout_in_seconds            = "2"
-    backend_tcp_proxy_protocol_version = "1"
-  }
-}
-
 resource "oci_load_balancer_backend" "lb-be1" {
   load_balancer_id = oci_load_balancer.lb1.id
   backendset_name  = oci_load_balancer_backend_set.lb-bes1.name
@@ -340,7 +292,7 @@ resource "oci_load_balancer_backend" "lb-be1" {
 
 resource "oci_load_balancer_backend" "lb-be2" {
   load_balancer_id = oci_load_balancer.lb2.id
-  backendset_name  = oci_load_balancer_backend_set.lb-bes2.name
+  backendset_name  = oci_load_balancer_backend_set.lb-bes1.name
   ip_address       = oci_core_instance.instance2.private_ip
   port             = 80
   backup           = false
