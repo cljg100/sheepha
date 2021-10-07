@@ -34,6 +34,9 @@ variable "instance_shape" {
 variable "availability_domain" {
   default = 3
 }
+variable "instance_shape" {
+default = "VM.Standard2.1"
+}
 provider "oci" {
   tenancy_ocid     = var.tenancy_ocid
   user_ocid        = var.user_ocid
@@ -141,7 +144,7 @@ resource "oci_core_instance" "instance1" {
   availability_domain = data.oci_identity_availability_domain.ad1.name
   compartment_id      = var.compartment_ocid
   display_name        = "instance1"
-  shape               = "VM.Standard.E2.1.Micro"
+  shape               = var.instance_shape
 
   create_vnic_details {
     subnet_id        = oci_core_subnet.subnet1.id
@@ -189,7 +192,7 @@ resource "oci_core_instance" "instance2" {
   availability_domain = data.oci_identity_availability_domain.ad2.name
   compartment_id      = var.compartment_ocid
   display_name        = "instance2"
-  shape               = "VM.Standard.E2.1.Micro"
+  shape               = var.instance_shape
 
   create_vnic_details {
     subnet_id        = oci_core_subnet.subnet2.id
