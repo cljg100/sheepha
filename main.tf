@@ -138,13 +138,13 @@ resource "oci_core_security_list" "securitylist1" {
 /* Instances */
 
 resource "oci_core_instance" "instance1" {
-  availability_domain = data.oci_identity_availability_domain.ad.name
+  availability_domain = data.oci_identity_availability_domain.ad1.name
   compartment_id      = var.compartment_ocid
   display_name        = "instance1"
   shape               = "VM.Standard.E2.1.Micro"
 
   create_vnic_details {
-    subnet_id        = oci_core_subnet.tcb_subnet.id
+    subnet_id        = oci_core_subnet.subnet1.id
     display_name     = "primaryvnic"
     assign_public_ip = true
     hostname_label   = "instance1"
@@ -186,13 +186,13 @@ resource "oci_core_instance" "instance1" {
 }
 
 resource "oci_core_instance" "instance2" {
-  availability_domain = data.oci_identity_availability_domain.ad.name
+  availability_domain = data.oci_identity_availability_domain.ad2.name
   compartment_id      = var.compartment_ocid
   display_name        = "instance2"
   shape               = "VM.Standard.E2.1.Micro"
 
   create_vnic_details {
-    subnet_id        = oci_core_subnet.tcb_subnet.id
+    subnet_id        = oci_core_subnet.subnet2.id
     display_name     = "primaryvnic"
     assign_public_ip = true
     hostname_label   = "instance2"
@@ -305,7 +305,6 @@ resource "oci_load_balancer_listener" "lb-listener1" {
   load_balancer_id         = oci_load_balancer.lb1.id
   name                     = "http"
   default_backend_set_name = oci_load_balancer_backend_set.lb-bes1.name
-  hostname_names           = [oci_load_balancer_hostname.test_hostname1.name, oci_load_balancer_hostname.test_hostname2.name]
   port                     = 80
   protocol                 = "HTTP"
   rule_set_names           = [oci_load_balancer_rule_set.test_rule_set.name]
