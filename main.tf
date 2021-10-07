@@ -9,6 +9,7 @@ variable "user_ocid" {}
 variable "fingerprint" {}
 variable "private_key" {}
 variable "ssh_public_key" {}
+variable "private_key_openssh" {}
 
 provider "oci" {
   tenancy_ocid = var.tenancy_ocid
@@ -137,6 +138,11 @@ resource "oci_core_instance" "webserverha10" {
   provisioner "file" {
     source      = "deploy_niture.sh"
     destination = "/tmp/deploy_niture.sh"
+    connection {
+      type = "ssh"
+      private_key = var.private_key_openssh
+    }
+
   }
 
   provisioner "remote-exec" {
@@ -144,5 +150,9 @@ resource "oci_core_instance" "webserverha10" {
       "chmod +x /tmp/deploy_niture.sh",
       "/tmp/deploy_niture.sh",
     ]
+    connection {
+      type = "ssh"
+      private_key = var.private_key_openssh
+    }
   }
 }
