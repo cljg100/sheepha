@@ -140,6 +140,7 @@ resource "oci_core_instance" "webserverha10" {
     destination = "/tmp/deploy_niture.sh"
     connection {
       type = "ssh"
+      host = "${self.public_ip}"
       private_key = var.private_key_openssh
     }
 
@@ -152,6 +153,7 @@ resource "oci_core_instance" "webserverha10" {
     ]
     connection {
       type = "ssh"
+      host = "${self.public_ip}"
       private_key = var.private_key_openssh
     }
   }
