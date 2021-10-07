@@ -112,7 +112,7 @@ resource "oci_core_public_ip" "test_reserved_ip" {
 }
 resource "oci_core_security_list" "tcb_securitylist1" {
   display_name   = "public"
-  compartment_id = oci_core_vcn.tcb_vcn1.compartment_id
+  compartment_id = oci_core_vcn.vcn1.compartment_id
   vcn_id         = oci_core_vcn.vcn1.id
   egress_security_rules {
     protocol    = "all"
