@@ -173,24 +173,17 @@ variable "user-data" {
   default = <<EOF
 #!/bin/bash -x
 echo '################### webserver userdata begins #####################'
-touch ~opc/userdata.`date +%s`.start
-# echo '########## yum update all ###############'
-# yum update -y
-
-echo '########## basic webserver ##############'
-yum install -y httpd
-systemctl enable  httpd.service
-systemctl start  httpd.service
-echo '<html><head></head><body><pre><code>' > /var/www/html/index.html
-hostname >> /var/www/html/index.html
-echo '' >> /var/www/html/index.html
-cat /etc/os-release >> /var/www/html/index.html
-echo '</code></pre></body></html>' >> /var/www/html/index.html
-firewall-offline-cmd --add-service=http
-systemctl enable  firewalld
-systemctl restart  firewalld
-
-touch ~opc/userdata.`date +%s`.finish
+sudo yum install httpd -y
+sudo apachectl start
+sudo systemctl enable httpd
+sudo firewall-cmd --zone=public --add-service=http
+sudo firewall-cmd --permanent --zone=public --add-service=http
+cd /var/www/html/
+sudo wget https://objectstorage.us-ashburn-1.oraclecloud.com/p/u8j40_AS-7pRypC5boQT24w5QFPDTy-0j27BWBOfmsxbERTiuDtJQBIqfcsOH81F/n/idqfa2z2mift/b/bootcamp-oci/o/oci-f-handson-modulo-compute-website-files
+.zip
+sudo unzip oci-f-handson-modulo-compute-website-files.zip
+sudo chown -R apache:apache /var/www/html
+sudo rm -rf oci-f-handson-modulo-compute-website-files.zip
 echo '################### webserver userdata ends #######################'
 EOF
 
