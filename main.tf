@@ -131,23 +131,22 @@ resource "oci_core_instance" "webserverha1" {
   }
 
   metadata = {
-    ssh_authorized_keys = var.ssh_public_key
     user_data = base64encode(var.user-data)
   }
 }
 variable "user-data" {
 default = <<EOF
 #!/bin/bash -x
-sudo yum install httpd -y
-sudo apachectl start
-sudo systemctl enable httpd
-sudo firewall-cmd --zone=public --add-service=http
-sudo firewall-cmd --permanent --zone=public --add-service=http
-sudo echo "chamei aqui" > /var/www/html/teste.txt
+yum install httpd -y
+apachectl start
+systemctl enable httpd
+firewall-cmd --zone=public --add-service=http
+firewall-cmd --permanent --zone=public --add-service=http
+echo "chamei aqui" > /var/www/html/teste.txt
 cd /var/www/html/
-sudo wget https://objectstorage.us-ashburn-1.oraclecloud.com/p/u8j40_AS-7pRypC5boQT24w5QFPDTy-0j27BWBOfmsxbERTiuDtJQBIqfcsOH81F/n/idqfa2z2mift/b/bootcamp-oci/o/oci-f-handson-modulo-compute-website-files.zip
-sudo unzip oci-f-handson-modulo-compute-website-files.zip
-sudo chown -R apache:apache /var/www/html
-sudo rm -rf oci-f-handson-modulo-compute-website-files.zip
+wget https://objectstorage.us-ashburn-1.oraclecloud.com/p/u8j40_AS-7pRypC5boQT24w5QFPDTy-0j27BWBOfmsxbERTiuDtJQBIqfcsOH81F/n/idqfa2z2mift/b/bootcamp-oci/o/oci-f-handson-modulo-compute-website-files.zip
+unzip oci-f-handson-modulo-compute-website-files.zip
+chown -R apache:apache /var/www/html
+rm -rf oci-f-handson-modulo-compute-website-files.zip
 EOF
 }
