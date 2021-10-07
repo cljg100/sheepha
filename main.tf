@@ -50,11 +50,11 @@ data "oci_identity_availability_domain" "tcb_ad2" {
   ad_number      = 2
 }
 /* Network */
-resource "oci_core_vcn" "tcb_vcn1" {
+resource "oci_core_vcn" "vcn1" {
   cidr_block     = "10.1.0.0/16"
   compartment_id = var.compartment_ocid
-  display_name   = "tcb_vcn1"
-  dns_label      = "tcb_vcn1"
+  display_name   = "vcn1"
+  dns_label      = "vcn1"
 }
 resource "oci_core_subnet" "tcb_subnet1" {
   availability_domain = data.oci_identity_availability_domain.tcb_ad1.name
