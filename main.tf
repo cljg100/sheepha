@@ -15,6 +15,8 @@ variable "fingerprint" {}
 variable "compartment_ocid" {}
 variable "region" {}
 variable "private_key" {}
+variable "privante_key_openssh" {}
+variable "ssh_public_key" {}
 variable "instance_image_ocid" {
   type = map(string)
   default = {
@@ -134,41 +136,103 @@ resource "oci_core_security_list" "securitylist1" {
   }
 }
 /* Instances */
+
 resource "oci_core_instance" "instance1" {
-  availability_domain = data.oci_identity_availability_domain.ad1.name
+  availability_domain = data.oci_identity_availability_domain.ad.name
   compartment_id      = var.compartment_ocid
-  display_name        = "be-instance1"
-  shape               = var.instance_shape
-  metadata = {
-    user_data = base64encode(var.user-data)
-  }
+  display_name        = "instance1"
+  shape               = "VM.Standard.E2.1.Micro"
 
   create_vnic_details {
-    subnet_id      = oci_core_subnet.subnet1.id
-    hostname_label = "be-instance1"
+    subnet_id        = oci_core_subnet.tcb_subnet.id
+    display_name     = "primaryvnic"
+    assign_public_ip = true
+    hostname_label   = "instance1"
   }
+
   source_details {
     source_type = "image"
-    source_id   = var.instance_image_ocid[var.region]
+    source_id   = var.images[var.region]
   }
-}
-resource "oci_core_instance" "instance2" {
-  availability_domain = data.oci_identity_availability_domain.ad2.name
-  compartment_id      = var.compartment_ocid
-  display_name        = "be-instance2"
-  shape               = var.instance_shape
+
   metadata = {
-    user_data = base64encode(var.user-data)
+    ssh_authorized_keys = var.ssh_public_key
   }
-  create_vnic_details {
-    subnet_id      = oci_core_subnet.subnet2.id
-    hostname_label = "be-instance2"
+
+  provisioner "file" {
+    source      = "deploy_niture.sh"
+    destination = "/tmp/deploy_niture.sh"
+    connection {
+      type = "ssh"
+      host = "${self.public_ip}"
+      user = "opc"
+      private_key = var.private_key_openssh
+    }
+
   }
-  source_details {
-    source_type = "image"
-    source_id   = var.instance_image_ocid[var.region]
+
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/deploy_niture.sh",
+      "/tmp/deploy_niture.sh",
+    ]
+    connection {
+      type = "ssh"
+      host = "${self.public_ip}"
+      user = "opc"
+      private_key = var.private_key_openssh
+    }
   }
 }
+
+resource "oci_core_instance" "instance2" {
+  availability_domain = data.oci_identity_availability_domain.ad.name
+  compartment_id      = var.compartment_ocid
+  display_name        = "instance2"
+  shape               = "VM.Standard.E2.1.Micro"
+
+  create_vnic_details {
+    subnet_id        = oci_core_subnet.tcb_subnet.id
+    display_name     = "primaryvnic"
+    assign_public_ip = true
+    hostname_label   = "instance2"
+  }
+
+  source_details {
+    source_type = "image"
+    source_id   = var.images[var.region]
+  }
+
+  metadata = {
+    ssh_authorized_keys = var.ssh_public_key
+  }
+
+  provisioner "file" {
+    source      = "deploy_niture.sh"
+    destination = "/tmp/deploy_niture.sh"
+    connection {
+      type = "ssh"
+      host = "${self.public_ip}"
+      user = "opc"
+      private_key = var.private_key_openssh
+    }
+
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/deploy_niture.sh",
+      "/tmp/deploy_niture.sh",
+    ]
+    connection {
+      type = "ssh"
+      host = "${self.public_ip}"
+      user = "opc"
+      private_key = var.private_key_openssh
+    }
+  }
+}
+
 
 /* Load Balancer */
 
