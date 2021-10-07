@@ -14,7 +14,7 @@ variable "user_ocid" {}
 variable "fingerprint" {}
 variable "compartment_ocid" {}
 variable "region" {}
-variable "private_key {}
+variable "private_key" {}
 variable "instance_image_ocid" {
   type = map(string)
   default = {
