@@ -17,7 +17,7 @@ variable "region" {}
 variable "private_key" {}
 variable "private_key_openssh" {}
 variable "ssh_public_key" {}
-variable "instance_image_ocid" {
+variable "images" {
   type = map(string)
   default = {
     # See https://docs.us-phoenix-1.oraclecloud.com/images/
