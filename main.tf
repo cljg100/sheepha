@@ -63,9 +63,9 @@ resource "oci_core_subnet" "tcb_subnet1" {
   dns_label           = "tcb_subnet1"
   security_list_ids   = [oci_core_security_list.tcb_securitylist1.id]
   compartment_id      = var.compartment_ocid
-  vcn_id              = oci_core_vcn.tcb_vcn1.id
+  vcn_id              = oci_core_vcn.vcn1.id
   route_table_id      = oci_core_route_table.tcb_routetable1.id
-  dhcp_options_id     = oci_core_vcn.tcb_vcn1.default_dhcp_options_id
+  dhcp_options_id     = oci_core_vcn.vcn1.default_dhcp_options_id
 
   provisioner "local-exec" {
     command = "sleep 5"
@@ -80,7 +80,7 @@ resource "oci_core_subnet" "tcb_subnet2" {
   compartment_id      = var.compartment_ocid
   vcn_id              = oci_core_vcn.vcn1.id
   route_table_id      = oci_core_route_table.tcb_routetable1.id
-  dhcp_options_id     = oci_core_vcn.tcb_vcn1.default_dhcp_options_id
+  dhcp_options_id     = oci_core_vcn.vcn1.default_dhcp_options_id
   provisioner "local-exec" {
     command = "sleep 5"
   }
