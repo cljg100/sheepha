@@ -130,8 +130,8 @@ resource "oci_core_security_list" "securitylist1" {
     protocol = "6"
     source   = "0.0.0.0/0"
     tcp_options {
-      min = 443
-      max = 443
+      min = 22
+      max = 22
     }
   }
 }
@@ -350,63 +350,6 @@ resource "oci_load_balancer_backend" "lb-be2" {
   weight           = 1
 }
 
-resource "oci_load_balancer_rule_set" "test_rule_set" {
-  items {
-    action = "ADD_HTTP_REQUEST_HEADER"
-    header = "example_header_name"
-    value  = "example_header_value"
-  }
-
-  items {
-    action          = "CONTROL_ACCESS_USING_HTTP_METHODS"
-    allowed_methods = ["GET", "POST"]
-    status_code     = "405"
-  }
-
-  items {
-    action      = "ALLOW"
-    description = "example vcn ACL"
-
-    conditions {
-      attribute_name  = "SOURCE_VCN_ID"
-      attribute_value = oci_core_vcn.vcn1.id
-    }
-
-    conditions {
-      attribute_name  = "SOURCE_VCN_IP_ADDRESS"
-      attribute_value = "10.10.1.0/24"
-    }
-  }
-
-  items {
-    action = "REDIRECT"
-
-    conditions {
-      attribute_name  = "PATH"
-      attribute_value = "/example"
-      operator        = "FORCE_LONGEST_PREFIX_MATCH"
-    }
-
-    redirect_uri {
-      protocol = "{protocol}"
-      host     = "in{host}"
-      port     = 8081
-      path     = "{path}/video"
-      query    = "?lang=en"
-    }
-
-    response_code = 302
-  }
-
-  items {
-    action                         = "HTTP_HEADER"
-    are_invalid_characters_allowed = true
-    http_large_header_size_in_kb   = 8
-  }
-
-  load_balancer_id = oci_load_balancer.lb1.id
-  name             = "example_rule_set_name"
-}
 
 output "lb_public_ip" {
   value = [oci_load_balancer.lb1.ip_address_details]
