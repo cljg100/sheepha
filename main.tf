@@ -14,7 +14,7 @@ variable "user_ocid" {}
 variable "fingerprint" {}
 variable "compartment_ocid" {}
 variable "region" {}
-variable private_key {}
+variable "private_key {}
 variable "instance_image_ocid" {
   type = map(string)
   default = {
@@ -36,7 +36,7 @@ provider "oci" {
   tenancy_ocid     = var.tenancy_ocid
   user_ocid        = var.user_ocid
   fingerprint      = var.fingerprint
-  private_key_path = var.private_key_path
+  private_key      = var.private_key
   region           = var.region
 }
 data "oci_identity_availability_domain" "ad1" {
