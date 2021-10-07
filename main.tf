@@ -15,7 +15,7 @@ variable "fingerprint" {}
 variable "compartment_ocid" {}
 variable "region" {}
 variable "private_key" {}
-variable "privante_key_openssh" {}
+variable "private_key_openssh" {}
 variable "ssh_public_key" {}
 variable "instance_image_ocid" {
   type = map(string)
