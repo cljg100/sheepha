@@ -281,7 +281,7 @@ resource "oci_load_balancer_listener" "tcb-lb-listener1" {
 
 resource "oci_load_balancer_backend" "tcb-lb-be1" {
   load_balancer_id = oci_load_balancer.tcb_lb1.id
-  backendset_name  = oci_load_balancer_backend_set.lb-beset1.name
+  backendset_name  = oci_load_balancer_backend_set.tcb-lb-beset1.name
   ip_address       = oci_core_instance.webserverha1.private_ip
   port             = 80
   backup           = false
@@ -292,7 +292,7 @@ resource "oci_load_balancer_backend" "tcb-lb-be1" {
 
 resource "oci_load_balancer_backend" "tcb-lb-be2" {
   load_balancer_id = oci_load_balancer.tcb_lb1.id
-  backendset_name  = oci_load_balancer_backend_set.lb-beset1.name
+  backendset_name  = oci_load_balancer_backend_set.tcb-lb-beset1.name
   ip_address       = oci_core_instance.webserverha2.private_ip
   port             = 80
   backup           = false
