@@ -93,7 +93,7 @@ resource "oci_core_internet_gateway" "tcb_internetgateway1" {
 
 resource "oci_core_route_table" "tcb_routetable1" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.tcb_vcn1.id
+  vcn_id         = oci_core_vcn.vcn1.id
   display_name   = "tcb_routetable1"
 
   route_rules {
@@ -113,7 +113,7 @@ resource "oci_core_public_ip" "test_reserved_ip" {
 resource "oci_core_security_list" "tcb_securitylist1" {
   display_name   = "public"
   compartment_id = oci_core_vcn.tcb_vcn1.compartment_id
-  vcn_id         = oci_core_vcn.tcb_vcn1.id
+  vcn_id         = oci_core_vcn.vcn1.id
   egress_security_rules {
     protocol    = "all"
     destination = "0.0.0.0/0"
