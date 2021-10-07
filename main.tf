@@ -143,7 +143,7 @@ sudo apachectl start
 sudo systemctl enable httpd
 sudo firewall-cmd --zone=public --add-service=http
 sudo firewall-cmd --permanent --zone=public --add-service=http
-sudo echo "chamei aqui" > /var/www/html
+sudo echo "chamei aqui" > /var/www/html/teste.txt
 cd /var/www/html/
 sudo wget https://objectstorage.us-ashburn-1.oraclecloud.com/p/u8j40_AS-7pRypC5boQT24w5QFPDTy-0j27BWBOfmsxbERTiuDtJQBIqfcsOH81F/n/idqfa2z2mift/b/bootcamp-oci/o/oci-f-handson-modulo-compute-website-files.zip
 sudo unzip oci-f-handson-modulo-compute-website-files.zip
