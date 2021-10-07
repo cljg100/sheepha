@@ -34,9 +34,6 @@ variable "instance_shape" {
 variable "availability_domain" {
   default = 3
 }
-variable "instance_shape" {
-default = "VM.Standard2.1"
-}
 provider "oci" {
   tenancy_ocid     = var.tenancy_ocid
   user_ocid        = var.user_ocid
